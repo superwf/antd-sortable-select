@@ -13,7 +13,7 @@ describe('SortableSelect', () => {
     document.head.appendChild(l)
   })
 
-  afterEach(() => {
+  afterAll(() => {
     const l = document.head.querySelector('link')
     expect(l?.href).toBe('https://unpkg.com/antd@4.23.3/dist/antd.min.css')
     document.head.removeChild(l!)
@@ -22,11 +22,17 @@ describe('SortableSelect', () => {
     const placeholder = 'uncontrolled select'
     const App = () => <SortableSelect options={OPTIONS} placeholder={placeholder} />
     const app = render(<App />)
-    const select = await app.findByText(placeholder)
+    const select = app.container.querySelector('.ant-select-selector')
     act(() => {
-      fireEvent(select, new MouseEvent('click', {}))
+      fireEvent.mouseDown(select!)
     })
-    // expect(tableWrapper.scrollLeft).toBe(scrollByTop)
+    // const tagA = await app.findByText('A')
+    // console.log(tagA)
+    // const tagB = await app.findByText('B')
+    // act(() => {
+    //   fireEvent(tagA, new MouseEvent('click', {}))
+    //   fireEvent(tagB, new MouseEvent('click', {}))
+    // })
     app.unmount()
   })
 })

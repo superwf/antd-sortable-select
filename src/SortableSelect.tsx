@@ -45,16 +45,11 @@ export const SortableSelect: React.FC<Props> = React.memo(({ value, onChange: on
     }
   }
 
-  // React.useEffect(() => {
-  //   setInnerValue(value || [])
-  //   console.log(value)
-  // }, [value])
-  console.log(uuid, innerValue)
-
   return (
     <DndContext sensors={sensors} collisionDetection={closestCorners} onDragEnd={onDragEnd}>
       <SortableContext id={uuid} items={value || innerValue} strategy={rectSortingStrategy}>
         <Select
+          id={id}
           {...props}
           mode="multiple"
           value={value || innerValue}

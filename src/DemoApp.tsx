@@ -1,5 +1,5 @@
 import React from 'react'
-import { Divider, Form, Card, Button } from 'antd'
+import { Divider, Form, Card, Button, Row } from 'antd'
 import {
   DndContext,
   closestCenter,
@@ -15,14 +15,23 @@ import { SortableItem } from './SortableItem'
 import { SUB_OPTIONS, OPTIONS } from './demoData'
 import { SortableSelect } from './SortableSelect'
 
-const ControlledForm: React.FC = React.memo(() => (
-  <Form onFinish={console.log}>
-    <Form.Item label="Form Controled" name="controled">
-      <SortableSelect key="controled" options={OPTIONS} />
-    </Form.Item>
-    <Button htmlType="submit">submit</Button>
-  </Form>
-))
+const ControlledForm: React.FC = React.memo(() => {
+  const [form] = Form.useForm()
+  const [result, setResult] = React.useState<string[]>([])
+  return (
+    <Form onFinish={v => setResult(v.controlled)} form={form}>
+      <Form.Item label="Form Controled" name="controlled">
+        <SortableSelect className="controlled" key="controlled" options={OPTIONS} />
+      </Form.Item>
+      <Row justify="center">
+        <Button htmlType="submit" type="primary">
+          submit
+        </Button>
+      </Row>
+      <div>{result && result.length && result.join(',')}</div>
+    </Form>
+  )
+})
 
 const fullWidth: React.CSSProperties = {
   width: '100%',
@@ -37,11 +46,7 @@ export const DemoApp: React.FC = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   )
-  // let currentItemValue = ''
-  // const onFocus = React.useCallback(() => {
-  // }, [])
   const onSubItemsChange = React.useCallback((v: UniqueIdentifier[], _: any, id: UniqueIdentifier) => {
-    console.log(v)
     setSubItems(items => ({
       ...items,
       [id]: v as string[],
@@ -50,16 +55,17 @@ export const DemoApp: React.FC = () => {
 
   return (
     <Card>
-      Uncontroled: <SortableSelect options={OPTIONS} placeholder="uncontrolled select" id="uncontrolled" />
+      <Form.Item label="Uncontroled">
+        <SortableSelect
+          style={fullWidth}
+          options={OPTIONS}
+          placeholder="uncontrolled select"
+          id="uncontrolled"
+          className="uncontrolled"
+        />
+      </Form.Item>
       <ControlledForm />
-      {/* mobx controled: */}
-      {/* <SortableSelect */}
-      {/*   style={{ width: '20em' }} */}
-      {/*   options={OPTIONS} */}
-      {/*   value={itemsSetter.value} */}
-      {/*   onChange={itemsSetter.set} */}
-      {/* /> */}
-      {/* <Select style={{ width: '100%' }} options={OPTIONS} mode="tags" /> */}
+      <Divider />
       <Form.Item label="一维">
         <SortableSelect
           // maxTagCount={2}
@@ -84,7 +90,6 @@ export const DemoApp: React.FC = () => {
                 const newIndex = items.indexOf(String(over!.id))
 
                 const newItems = arrayMove(items, oldIndex, newIndex)
-                console.log(newItems)
                 return newItems
               })
             }
@@ -117,14 +122,16 @@ export const DemoApp: React.FC = () => {
           </SortableContext>
         </DndContext>
       </Card>
-      <Button
-        type="primary"
-        onClick={() => {
-          console.log(mainItems, subItems)
-        }}
-      >
-        submit
-      </Button>
+      <Row justify="center">
+        <Button
+          type="primary"
+          onClick={() => {
+            console.log(mainItems, subItems)
+          }}
+        >
+          submit
+        </Button>
+      </Row>
     </Card>
   )
 }
